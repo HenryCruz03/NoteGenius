@@ -1,33 +1,39 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 import { Box, Typography } from "@mui/material";
-
+import NavBar from "./NavBar/NavBar";
+import { useRouter } from "next/navigation";
+import { useUser, useAuth } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { auth } from "@/firebase";
+import { signInWithCustomToken } from "firebase/auth";
 
 export default function Home() {
+  const router = useRouter();
+  const { isSignedIn, user } = useUser();
+  const { getToken } = useAuth();
+
+  const signIntoFirebaseWithClerk = async () => {
+    const token = await getToken({ template: 'integration_firebase' })
+    await signInWithCustomToken(auth, token)
+  }
+
+  useEffect(() => {
+    if (isSignedIn) {
+      signIntoFirebaseWithClerk();
+    }
+  }, [isSignedIn]);
   
   return (
   
-    <Box sx={{p:2,backgroundColor:"rgb(2, 25, 51)", width:"100vw",height:"100vh", 
-      alignItems:"center",
-      display:"flex",
-      pt:4,
-      flexDirection:"column",
-      textAlign:"right"
+    <Box sx={{
+      backgroundColor:"rgb(2, 25, 51)", 
+      width:"100vw",
+      height:"100vh", 
       }}
-      >
-      <Box sx={{p:8,backgroundcolor:"rgb(255, 255, 255)",width:"25",height:"25",
-        
-      }}>
-
-      </Box>
-    <Typography 
-    variant="h7"
-    sx={{textAlign:"center",justifyContent:"flex-start" }}
     >
-    Drag and Drop Note Files Here 
-    </Typography>  
-   
-    
+      <NavBar/>
+      
+  
      </Box>
     
   )

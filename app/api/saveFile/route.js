@@ -13,7 +13,6 @@ import pdfParse from "pdf-parse";
 export async function POST(req) {
   try {
     const formData = await req.formData();
-    
     const file = formData.get("file");
     const userId = formData.get("userId");
 

@@ -14,6 +14,7 @@ export default function Home() {
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
   const [ error, setError ] = useState('');
+  const [userFiles, setUserFiles] = useState([]);
 
   const signIntoFirebaseWithClerk = async () => {
     const token = await getToken({ template: "integration_firebase" });
@@ -25,6 +26,20 @@ export default function Home() {
       signIntoFirebaseWithClerk();
     }
   }, [isSignedIn]);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`/api/getUserFiles?userId=${user.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Fetched user files:", data); 
+          setUserFiles(data);   
+        })
+        .catch((err) => {
+          console.error("Error fetching files:", err);
+        });
+    }
+  }, [user?.id]);
 
   // Dropzone setup for drag-and-drop PDF upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

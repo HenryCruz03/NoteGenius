@@ -5,7 +5,7 @@ node_modules/
 .next/
 out/
 build/
-
+NoteGenius_Private_Key.json
 # Production
 .swc
 .vercel

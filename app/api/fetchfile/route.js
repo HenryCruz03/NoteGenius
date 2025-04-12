@@ -1,5 +1,5 @@
-import { getFirestore } from "firebase-admin/firestore";
-const db = getFirestore();
+import { adminDB } from "@/firebase_admin";
+
 
 /**
  * Returns all files in Firestore that belong to a specific user.
@@ -13,7 +13,7 @@ export async function GET(request) {
   }
 
   try {
-    const snapshot = await db.collection("files").where("uid", "==", userId).get();
+    const snapshot = await adminDB.collection("files").where("uid", "==", userId).get();
 
     const files = snapshot.docs.map((doc) => ({
       id: doc.id,

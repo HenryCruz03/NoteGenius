@@ -28,18 +28,22 @@ export default function Home() {
   }, [isSignedIn]);
 
   useEffect(() => {
-    if (user?.id) {
-      fetch(`/api/getUserFiles?userId=${user.id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched user files:", data); 
-          setUserFiles(data);   
-        })
-        .catch((err) => {
-          console.error("Error fetching files:", err);
-        });
-    }
-  }, [user?.id]);
+    if (!isSignedIn) return;
+
+    const fetchUserFiles = async () => {
+      try {
+        const res = await fetch(`/api/fetchfile?userId=${user.id}`);
+        if (!res.ok) throw new Error("Failed to fetch files");
+        
+        const data = await res.json();
+        console.log("Fetched user files:", data);
+        setUserFiles(data);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+    };
+    fetchUserFiles();
+  }, [isSignedIn, user?.id]);
 
   // Dropzone setup for drag-and-drop PDF upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -63,13 +67,17 @@ export default function Home() {
         }
 
         try {
+          const token = await auth.currentUser.getIdToken();
           const formData = new FormData();
           formData.append("file", file);
           formData.append("userId", user.id);
 
-          const res = await fetch("/api/saveFile", {
+          const res = await fetch("api/saveFile", {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           });
 
           if (!res.ok) {

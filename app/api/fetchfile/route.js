@@ -1,8 +1,7 @@
-import { db } from "@/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore } from "firebase-admin/firestore";
+const db = getFirestore();
 
 /**
- * GET /api/getUserFiles?userId=abc123
  * Returns all files in Firestore that belong to a specific user.
  */
 export async function GET(request) {
@@ -14,8 +13,7 @@ export async function GET(request) {
   }
 
   try {
-    const q = query(collection(db, "files"), where("userId", "==", userId));
-    const snapshot = await getDocs(q);
+    const snapshot = await db.collection("files").where("uid", "==", userId).get();
 
     const files = snapshot.docs.map((doc) => ({
       id: doc.id,

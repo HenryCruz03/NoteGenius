@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
-import { db, storage } from "@/firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import pdfParse from "pdf-parse";
+import { getAuth } from "firebase-admin/auth";
+import { getStorage } from "firebase-admin/storage";
+import { getFirestore } from "firebase-admin/firestore";
+const db = getFirestore();
 
 /**
  * Saves a PDF file and its extracted text as a .txt file to Firebase Storage, and stores metadata in Firestore.
@@ -14,31 +15,42 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const file = formData.get("file");
-    const userId = formData.get("userId");
-
-    if (!file || !userId) throw new Error("File and userId are required");
-
+    const userId = formData.get("userId")
   
     const timestamp = new Date();
     const fileId = uuidv4(); // Generate a unique ID
     const txtFileId = uuidv4(); // TXT file ID
 
-    // Upload PDF file
-    const pdfStorageRef = ref(storage, `files/${userId}/${fileId}`);
-    const pdfSnapshot = await uploadBytes(pdfStorageRef, file);
-    const pdfURL = await getDownloadURL(pdfSnapshot.ref);
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    const bucket = getStorage().bucket(process.env.FIREBASE_STORAGE_BUCKET);
+
+    // Upload the original PDF
+    const pdfPath = `files/${userId}/${fileId}`;
+    const pdfFile = bucket.file(pdfPath);
+    await pdfFile.save(buffer, {
+      contentType: file.type,
+      resumable: false,
+    });
+    const [pdfURL] = await pdfFile.getSignedUrl({
+      action: "read",
+      expires: "03-01-2030",
+    });
 
     // Extract text from PDF
     const pdfData = await pdfParse(buffer);
     const extractedText = pdfData.text;
 
-    // Create a .txt Blob and upload
-    const textBlob = new Blob([extractedText], { type: "text/plain" });
-    const txtStorageRef = ref(storage, `files/${userId}/${txtFileId}`);
-    await uploadBytes(txtStorageRef, textBlob);
+    // Upload extracted text as .txt
+    const txtPath = `files/${userId}/${txtFileId}`;
+    const txtFile = bucket.file(txtPath);
+    await txtFile.save(Buffer.from(extractedText), {
+      contentType: "text/plain",
+      resumable: false,
+    });
 
     // Save metadata to Firestore
-    const docRef = await addDoc(collection(db, "files"), {
+    const docRef = await db.collection("files").add({
       uid: userId,
       fileName: file.name,
       fileSize: file.size,

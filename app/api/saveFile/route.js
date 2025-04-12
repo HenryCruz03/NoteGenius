@@ -46,8 +46,7 @@ export async function POST(req) {
       resumable: false,
     });
 
-    // Save metadata to Firestore
-    const docRef = await adminDB.collection("files").add({
+    const fileData = {
       uid: userId,
       fileName: file.name,
       fileSize: file.size,
@@ -55,9 +54,12 @@ export async function POST(req) {
       id: fileId,
       txtId: txtFileId,
       url: pdfURL
-    });
+    }
 
-    return NextResponse.json({ fileId, pdfURL});
+    // Save metadata to Firestore
+    const docRef = await adminDB.collection("files").add(fileData);
+
+    return NextResponse.json({ fileData });
   } catch (error) {
     console.error("File upload failed:", error);
     throw error;

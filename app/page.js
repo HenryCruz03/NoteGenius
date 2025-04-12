@@ -8,13 +8,15 @@ import { auth } from "@/firebase";
 import { signInWithCustomToken } from "firebase/auth";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useDropzone } from "react-dropzone";
+import { FileViewStore } from "./stateManagement/FileViewStore";
+import { observer } from "mobx-react"
 
-export default function Home() {
+const Home = observer(() => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
   const [ error, setError ] = useState('');
-  const [userFiles, setUserFiles] = useState([]);
+  const fileViewStore = new FileViewStore();
 
   const signIntoFirebaseWithClerk = async () => {
     const token = await getToken({ template: "integration_firebase" });
@@ -29,15 +31,12 @@ export default function Home() {
 
   useEffect(() => {
     if (!isSignedIn) return;
+    if (fileViewStore.filesLoaded) return;
 
     const fetchUserFiles = async () => {
       try {
-        const res = await fetch(`/api/fetchfile?userId=${user.id}`);
-        if (!res.ok) throw new Error("Failed to fetch files");
-        
-        const data = await res.json();
-        console.log("Fetched user files:", data);
-        setUserFiles(data);
+        await fileViewStore.loadFiles(user.id);
+        console.log('Fetched files: ', fileViewStore.filesArr);
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -67,25 +66,7 @@ export default function Home() {
         }
 
         try {
-          const token = await auth.currentUser.getIdToken();
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("userId", user.id);
-
-          const res = await fetch("api/saveFile", {
-            method: "POST",
-            body: formData,
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-
-          if (!res.ok) {
-            throw new Error(`Server Error: ${res.status}`);
-          }
-        
-          const data = await res.json();
-          console.log("Uploaded:", data);
+          await fileViewStore.addFile(file, user.id);
         } catch (error) {
           setError("Error uploading file, please try again.");
           console.error(error);
@@ -118,12 +99,14 @@ export default function Home() {
       <Box
         sx={{
           width: "100%",
+          height: "100%",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "Center",
           gap: 4,
           px: 2,
           pt: 8,
+          overflowY: 'auto',
         }}
       >
         <Paper
@@ -217,6 +200,19 @@ export default function Home() {
           </Typography>
         </Paper>
       </Box>
+      
+      {/* Display file names */}
+      {fileViewStore.filesArr.length > 0 && (
+        <Box sx={{display: 'flex', flexDirection: 'column', backgroundColor: 'white'}}>
+          {fileViewStore.filesArr.map((file, index) => (
+            <Typography key={index}>
+              {file.fileName}
+            </Typography>
+          ))}
+        </Box>
+      )}
     </Box>
   );
-}
+});
+
+export default Home;

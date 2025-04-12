@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from 'uuid';
 import pdfParse from "pdf-parse";
-import { getAuth } from "firebase-admin/auth";
-import { getStorage } from "firebase-admin/storage";
-import { getFirestore } from "firebase-admin/firestore";
-const db = getFirestore();
+import { adminDB, adminStorage } from "@/firebase_admin";
 
 /**
  * Saves a PDF file and its extracted text as a .txt file to Firebase Storage, and stores metadata in Firestore.
@@ -23,7 +20,7 @@ export async function POST(req) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const bucket = getStorage().bucket(process.env.FIREBASE_STORAGE_BUCKET);
+    const bucket = adminStorage.bucket(process.env.FIREBASE_STORAGE_BUCKET);
 
     // Upload the original PDF
     const pdfPath = `files/${userId}/${fileId}`;
@@ -50,7 +47,7 @@ export async function POST(req) {
     });
 
     // Save metadata to Firestore
-    const docRef = await db.collection("files").add({
+    const docRef = await adminDB.collection("files").add({
       uid: userId,
       fileName: file.name,
       fileSize: file.size,

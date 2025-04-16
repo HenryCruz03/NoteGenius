@@ -2,11 +2,13 @@ import { action, makeAutoObservable, } from 'mobx';
 import { v4 as uuidv4 } from 'uuid';
 
 export class FileViewStore {
+  root;
   filesArr = [];
   selectedFile = null;
   filesLoaded = false;
 
-  constructor() {
+  constructor(root) {
+    this.root = root;
     makeAutoObservable(this);
   }
 
@@ -24,6 +26,10 @@ export class FileViewStore {
 
   setSelectedFile = action((file) => {
     this.selectedFile = file;
+  });
+
+  unselectFile = action(() => {
+    this.selectedFile = null;
   });
 
   loadFiles = action(async (userId) => {

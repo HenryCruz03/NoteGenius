@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography, button, rgbToHex, Paper } from "@mui/material";
+import { Box, Typography, button, rgbToHex, Paper, Card, CardContent, Checkbox } from "@mui/material";
 import NavBar from "./NavBar/NavBar";
 import { useRouter } from "next/navigation";
 import { useUser, useAuth } from "@clerk/nextjs";
@@ -8,15 +8,24 @@ import { auth } from "@/firebase";
 import { signInWithCustomToken } from "firebase/auth";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useDropzone } from "react-dropzone";
-import { FileViewStore } from "./stateManagement/FileViewStore";
 import { observer } from "mobx-react"
+import { useStore } from "./stateManagement/RootStoreProvider";
 
 const Home = observer(() => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
   const [ error, setError ] = useState('');
-  const fileViewStore = new FileViewStore();
+  const fileViewStore = useStore().fileViewStore;
+
+  const { 
+    filesArr, 
+    selectedFile, 
+    setSelectedFile, 
+    unselectFile, 
+    filesLoaded, 
+    loadFiles,
+  } = fileViewStore;
 
   const signIntoFirebaseWithClerk = async () => {
     const token = await getToken({ template: "integration_firebase" });
@@ -31,18 +40,18 @@ const Home = observer(() => {
 
   useEffect(() => {
     if (!isSignedIn) return;
-    if (fileViewStore.filesLoaded) return;
+    if (filesLoaded) return;
 
     const fetchUserFiles = async () => {
       try {
-        await fileViewStore.loadFiles(user.id);
-        console.log('Fetched files: ', fileViewStore.filesArr);
+        await loadFiles(user.id);
+        console.log('Fetched files: ', filesArr);
       } catch (error) {
         console.error("Error fetching files:", error);
       }
     };
     fetchUserFiles();
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user?.id, filesArr, filesLoaded, loadFiles]);
 
   // Dropzone setup for drag-and-drop PDF upload
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -66,7 +75,7 @@ const Home = observer(() => {
         }
 
         try {
-          await fileViewStore.addFile(file, user.id);
+          await addFile(file, user.id);
         } catch (error) {
           setError("Error uploading file, please try again.");
           console.error(error);
@@ -86,12 +95,28 @@ const Home = observer(() => {
     },
   });
 
+  const handleFileClick = (file) => {
+    if (!selectedFile) {
+      setSelectedFile(file);
+    } else {
+      if (file.id != selectedFile.id) {
+        setSelectedFile(file);
+      } else {
+        unselectFile();
+      }
+    }
+  }
+
   return (
     <Box
       sx={{
+        display: "flex",
+        flexDirection: "column",
         backgroundColor: "#01454e",
         width: "100vw",
-        height: "100vh",
+        height: "100%",
+        overflowY: 'auto',
+        flex: 1,
       }}
     >
       <NavBar />
@@ -106,7 +131,6 @@ const Home = observer(() => {
           gap: 4,
           px: 2,
           pt: 8,
-          overflowY: 'auto',
         }}
       >
         <Paper
@@ -201,14 +225,74 @@ const Home = observer(() => {
         </Paper>
       </Box>
       
-      {/* Display file names */}
-      {fileViewStore.filesArr.length > 0 && (
-        <Box sx={{display: 'flex', flexDirection: 'column', backgroundColor: 'white'}}>
-          {fileViewStore.filesArr.map((file, index) => (
-            <Typography key={index}>
-              {file.fileName}
+      {/* Display files */}
+      {filesArr.length > 0 && (
+        <Box
+          component="div"
+          display="flex"
+          flexDirection="column"
+          width='100%'
+          sx={{overflowY: 'auto', m: 4}}
+        >
+          <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1rem' }} >  
+            <Typography variant="h4" color="white">
+              File Library
             </Typography>
-          ))}
+          </Box>
+          <Box
+            component="div"
+            display="flex"
+            flexWrap="wrap"
+            justifyContent="space-around"
+            gap="1em"
+          >
+            {filesArr.map((file) => (
+              <Card
+                key={file.id}
+                sx={{
+                  width: '15em',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                  },
+                  position: 'relative',
+                }}
+                onClick={() => handleFileClick(file)}
+              >
+                <CardContent>
+                  <embed
+                    src={file.url}
+                    width="100%" 
+                    height="100%"
+                  />
+                  <Typography gutterBottom>
+                    {file.fileName}
+                  </Typography>
+                </CardContent>
+                <Box
+                  component="div"
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '2.5rem', 
+                    height: '2.5rem',
+                    backgroundColor: 'inherit', 
+                    borderRadius: '50%',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Checkbox
+                    checked={selectedFile?.id === file.id}
+                  />
+                </Box>
+              </Card>
+            ))}
+          </Box>
         </Box>
       )}
     </Box>

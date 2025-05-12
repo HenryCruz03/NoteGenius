@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography, button, rgbToHex, Paper, Card, CardContent, Checkbox } from "@mui/material";
+import { Box, Typography, Button, rgbToHex, Paper, Card, CardContent, Checkbox, } from "@mui/material";
 import NavBar from "./NavBar/NavBar";
 import { useRouter } from "next/navigation";
 import { useUser, useAuth } from "@clerk/nextjs";
@@ -141,10 +141,10 @@ const Home = observer(() => {
             p: 3,
             borderRadius: 4,
             backgroundColor: "#f1edff",
-            textalign: "center",
+            textAlign: "center",
             display: "flex",
             justifyContent: "center",
-            FlexDirection: "column",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >
@@ -154,6 +154,19 @@ const Home = observer(() => {
           >
             Speak to our very own Chatbot!
           </Typography>
+          <Button
+          variant="contained"
+          sx={{mt:4, alignSelf: "center"}}
+          onClick={() => {
+            if (!selectedFile){
+              alert("⚠️ Please select a file before proceeding to the chatbot.")
+            }
+            router.push("/chatbot");
+          }}
+          >
+
+          Go to Chatbot
+          </Button>
         </Paper>
         <Paper
           elevation={6}
@@ -209,10 +222,10 @@ const Home = observer(() => {
             p: 3,
             borderRadius: 4,
             backgroundColor: "#f1edff",
-            textalign: "center",
+            textAlign: "center",
             display: "flex",
             justifyContent: "center",
-            FlexDirection: "column",
+            flexDirection: "column",
             alignItems: "center",
           }}
         >

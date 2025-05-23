@@ -35,7 +35,7 @@ export async function POST(req) {
     });
 
     // Extract text from PDF
-    const pdfData = await pdfParse(buffer);
+    const pdfData = await pdfParse(Buffer.from(buffer));
     const extractedText = pdfData.text;
 
     // Upload extracted text as .txt
@@ -53,8 +53,9 @@ export async function POST(req) {
       createdAt: timestamp,
       id: fileId,
       txtId: txtFileId,
-      url: pdfURL
-    }
+      url: pdfURL,
+      extractedText: extractedText,
+    };
 
     // Save metadata to Firestore
     const docRef = await adminDB.collection("files").add(fileData);

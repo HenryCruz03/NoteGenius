@@ -18,6 +18,7 @@ export async function GET(request) {
     const files = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
+      extractedText:doc.data().extractedText || "",
     }));
 
     console.log("Fetched files for user:", userId, files);

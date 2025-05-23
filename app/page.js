@@ -112,7 +112,7 @@ const Home = observer(() => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#01454e",
+        backgroundColor: "#faebd7",
         width: "100vw",
         height: "100%",
         overflowY: 'auto',
@@ -175,6 +175,7 @@ const Home = observer(() => {
             height: 400,
             p: 3,
             borderRadius: 4,
+            backgroundColor:"#f1edff",
             textAlign: "center",
             display: "flex",
             flexDirection: "column",
@@ -187,7 +188,6 @@ const Home = observer(() => {
           >
             Please Insert Notes Here:
           </Typography>
-
           <Box
             component="label"
             htmlFor="file-upload"
@@ -195,20 +195,20 @@ const Home = observer(() => {
             sx={{
               height: 200,
               width: 200,
-              border: "2px dashed white",
+              border: "2px dashed #6a92b2",
               borderRadius: 2,
               display: "inline-block",
               color: "rgba(5, 169, 175, 0.44)",
               cursor: "pointer",
               fontWeight: "bold",
-              backgroundColor: "rgba(5, 169, 175, 0.44)",
+              backgroundColor: "",
               "&:hover": {
-                backgroundColor: "rgba(3, 118, 153, 0.57)",
+                color: "#659abf",
               },
             }}
           >
-            <UploadFileIcon sx={{ fontSize: 60, color: "#6a92b2" }} />
-            <Typography sx={{ mt: 1 }}>
+            <UploadFileIcon sx={{ fontSize: 60, color: "black" }} />
+            <Typography sx={{ mt: 1,color:"#6a92b2"}}>
               Click or drag files here to upload
             </Typography>
             <input {...getInputProps()} />
@@ -235,6 +235,19 @@ const Home = observer(() => {
           >
             Create your Own Quiz here!
           </Typography>
+                 <Button
+          variant="contained"
+          sx={{mt:4, alignSelf: "center"}}
+          onClick={() => {
+            if (!selectedFile){
+              alert("⚠️ Please select a file before proceeding to the quiz creation.")
+            }
+            router.push("/quiz");
+          }}
+          >
+
+          Go to Quiz Creation
+          </Button>
         </Paper>
       </Box>
       
@@ -248,7 +261,7 @@ const Home = observer(() => {
           sx={{overflowY: 'auto', m: 4}}
         >
           <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1rem' }} >  
-            <Typography variant="h4" color="white">
+            <Typography variant="h4" color="black">
               File Library
             </Typography>
           </Box>

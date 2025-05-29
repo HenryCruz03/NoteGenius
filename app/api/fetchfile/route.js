@@ -20,9 +20,7 @@ export async function GET(request) {
       ...doc.data(),
       extractedText:doc.data().extractedText || "",
     }));
-
-    console.log("Fetched files for user:", userId, files);
-
+    
     return Response.json(files);
   } catch (error) {
     console.error("Error fetching user files:", error);

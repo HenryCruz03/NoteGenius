@@ -26,28 +26,34 @@ export async function POST(req) {
     
     Each question must have:
     - A clear question statement
-    - 4 Answer Choices in a multiple choice format
+    - 4 Answer Choices labeled A,B,C,D
     - One correct answer (from those 4)
 
-    Format the final response like this:
-    [
-    {
-    "question": "1. What is the powerhouse of the cell?",
-    "choices":["Nucleus","Mitochondria","Ribosome","Chloroplast"],
-    },
-    
-      ...
-    ]
+    Format the output in the following way:
+  [ 
+   {
+   question: " ....",
+   answer1: "....",
+   answer2: "....",
+   answer3: ".....",
+   answer4: "....",
+   correctAnswerIdx: 1, 2, 3, or 4
+   }
+  , 
+   .....
+  ,
+  .....
+]
     Here are the class notes to use:
     """
-    
-    
-    
-    
-    `
+    ${fileText}
+    """
+    `;
 
-
-
-
+    const result = await model.generateContent(fullPrompt );
+    const response = await result.response;
+    const text = response.text();
+    const quiz =JSON.parse(text);
+    return quiz
 
 }

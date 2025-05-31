@@ -1,12 +1,12 @@
 "use client";
-import { Box, Typography, Button, rgbToHex, Paper, Card, CardContent, Checkbox, } from "@mui/material";
+import { Box, Typography, Button, rgbToHex, Paper, Card, CardContent, Checkbox,Divider } from "@mui/material";
 import NavBar from "./NavBar/NavBar";
 import { useRouter } from "next/navigation";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { auth } from "@/firebase";
 import { signInWithCustomToken } from "firebase/auth";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+  import { SmartToy,Quiz,UploadFile} from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
 import { observer } from "mobx-react"
 import { useStore } from "./stateManagement/RootStoreProvider";
@@ -148,6 +148,7 @@ const Home = observer(() => {
             alignItems: "center",
           }}
         >
+          <SmartToy sx={{ fontSize: 60, color: "#6a92b2" }} />
           <Typography
             variant="h7"
             sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
@@ -184,7 +185,7 @@ const Home = observer(() => {
         >
           <Typography
             variant="h7"
-            sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
+            sx={{ fontWeight: "bold", mt: 10,mb:2, color: "#6a92b2" }}
           >
             Please Insert Notes Here:
           </Typography>
@@ -198,6 +199,7 @@ const Home = observer(() => {
               border: "2px dashed #6a92b2",
               borderRadius: 2,
               display: "inline-block",
+              justifyContent:"center",
               color: "rgba(5, 169, 175, 0.44)",
               cursor: "pointer",
               fontWeight: "bold",
@@ -207,8 +209,8 @@ const Home = observer(() => {
               },
             }}
           >
-            <UploadFileIcon sx={{ fontSize: 60, color: "black" }} />
-            <Typography sx={{ mt: 1,color:"#6a92b2"}}>
+            <UploadFile sx={{ fontSize: 60, color: "#6a92b2",mt:2}} />
+            <Typography sx={{ mt:2,color:"#6a92b2",display:"flex",justifyContent:"center"}}>
               Click or drag files here to upload
             </Typography>
             <input {...getInputProps()} />
@@ -229,6 +231,7 @@ const Home = observer(() => {
             alignItems: "center",
           }}
         >
+          <Quiz sx={{fontSize:60,color:"#6a92b2"}}/>
           <Typography
             variant="h7"
             sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
@@ -251,20 +254,22 @@ const Home = observer(() => {
         </Paper>
       </Box>
       
-      {/* Display files */}
+
       {filesArr.length > 0 && (
         <Box
           component="div"
           display="flex"
           flexDirection="column"
           width='100%'
-          sx={{overflowY: 'auto', m: 4}}
+          sx={{overflowY: 'auto', m: 4,}}
         >
+        
           <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1rem' }} >  
             <Typography variant="h4" color="black">
               File Library
             </Typography>
           </Box>
+          <Divider sx={{backgroundColor:"f1edff",mb:4}}/>
           <Box
             component="div"
             display="flex"

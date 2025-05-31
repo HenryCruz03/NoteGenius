@@ -43,6 +43,10 @@ export class QuizViewStore {
     this.userAnswers[idx] = val;
   })
 
+  SetShowExplanations = action((val) => {
+    this.ShowExplanations=val;
+  })
+
   generateQuiz = action(async () => {
     try {
       this.loading = true;

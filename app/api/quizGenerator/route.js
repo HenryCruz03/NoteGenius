@@ -33,6 +33,7 @@ export async function POST(req) {
             - A clear question statement
             - 4 answer choices
             - One correct answer (from those 4)
+            - An Explanation of why that answer is correct
 
             ⚠️ VERY IMPORTANT: 
             Your output must ONLY be a valid JSON array. DO NOT use code formatting of any kind (no triple backticks). DO NOT include markdown. DO NOT prefix or suffix the output with "json", "Here is the quiz:", or anything else.
@@ -47,6 +48,7 @@ export async function POST(req) {
                     "answer3": "....",
                     "answer4": "....",
                     "correctAnswerIdx": 1
+                    "explanation": "...."
                 },
                 ...
             ]

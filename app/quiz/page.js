@@ -1,6 +1,6 @@
 "use client";
 import {useEffect, useState } from "react";
-import { Box,Typography,TextField,MenuItem,Button,Card,CardContent,CircularProgress,Paper, FormControl, InputLabel, Select, RadioGroup, Radio, FormControlLabel} from "@mui/material";
+import { Box,Typography,MenuItem,Button, FormControl, InputLabel, Select, RadioGroup, Radio, FormControlLabel} from "@mui/material";
 import NavBar from "../NavBar/NavBar";
 import { useStore } from "@/app/stateManagement/RootStoreProvider";
 import { observer } from "mobx-react";
@@ -30,8 +30,9 @@ const QuizPage = observer(() => {
     generateQuiz,
     isSubmitted,
     resetQuiz,
+    ShowExplanations,
+    SetShowExplanations
   } = quizViewStore;
-
   useEffect(() => {
     if (!selectedFile) {
      alert("No File Selected. Please go back and select one.");
@@ -113,13 +114,15 @@ const QuizPage = observer(() => {
           <Box sx={{display: 'flex', flexDirection: 'column', overflowY: 'auto', height: "100%"}}>
             {quizContent.map((questionObj, idx) => (
               <Box key={idx}  sx={{display: 'flex', flexDirection: 'column', p: 4, }}>
-                <Typography> {questionObj.question} </ Typography>
-                <FormControl>
+                <Typography sx={{color:"black"}}> {questionObj.question} </ Typography>
+                
+               
+                <FormControl sx={{color:"black"}}>
                   <RadioGroup
                     value={userAnswers[idx]}
                     onChange={(event) => selectAnswerChoice(Number(event.target.value), idx)}
                     sx={{
-                      pointerEvents: isSubmitted ? "none" : "auto"
+                      pointerEvents: isSubmitted ? "none" : "auto", 
                     }}
                   >
                     {[1, 2, 3, 4].map((option) => {
@@ -135,7 +138,7 @@ const QuizPage = observer(() => {
                       } else {
                         if (isCorrect && isSelected) {
                           color = "success";
-                          checkedIcon = <CheckCircleIcon color="success" />;
+                          checkedIcon = <CheckCircleIcon color="success" />;  
                         } else if (isCorrect && !isSelected) {
                           color = "success";
                           icon = <CheckCircleIcon color="success" />;
@@ -162,6 +165,11 @@ const QuizPage = observer(() => {
                     })}
                   </RadioGroup>
                 </FormControl>
+                {isSubmitted && (
+                  <Button variant="outlined" onClick={()=> SetShowExplanations(prev => !prev)} sx={{mt:2}}> 
+                  {ShowExplanations ? "Hide Explanations" : "Show Explanations"}
+                  </Button>
+                )}
               </Box>
             ))}
           </Box>
@@ -174,12 +182,15 @@ const QuizPage = observer(() => {
               <Button variant="contained" size="large" onClick={() => setIsSubmitted(true)}>
                 Submit
               </Button>
+             
             )}
+           
           </Box>
+
           
         </Box>
       )}
-
+      
 
     </Box>
 

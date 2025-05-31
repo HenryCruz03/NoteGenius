@@ -83,7 +83,7 @@ export default function ChatbotPage() {
             window.open(selectedFile.url, "_blank");
           }}
         >
-          {showPDF ? "Hide PDF" : "View PDF"}
+          Show PDF
         </Button>
 
         <Box

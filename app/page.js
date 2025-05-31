@@ -1,29 +1,39 @@
 "use client";
-import { Box, Typography, Button, rgbToHex, Paper, Card, CardContent, Checkbox,Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  rgbToHex,
+  Paper,
+  Card,
+  CardContent,
+  Checkbox,
+  Divider,
+} from "@mui/material";
 import NavBar from "./NavBar/NavBar";
 import { useRouter } from "next/navigation";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { auth } from "@/firebase";
 import { signInWithCustomToken } from "firebase/auth";
-  import { SmartToy,Quiz,UploadFile} from "@mui/icons-material";
+import { SmartToy, Quiz, UploadFile } from "@mui/icons-material";
 import { useDropzone } from "react-dropzone";
-import { observer } from "mobx-react"
+import { observer } from "mobx-react";
 import { useStore } from "./stateManagement/RootStoreProvider";
 
 const Home = observer(() => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
-  const [ error, setError ] = useState('');
+  const [error, setError] = useState("");
   const fileViewStore = useStore().fileViewStore;
 
-  const { 
-    filesArr, 
-    selectedFile, 
-    setSelectedFile, 
-    unselectFile, 
-    filesLoaded, 
+  const {
+    filesArr,
+    selectedFile,
+    setSelectedFile,
+    unselectFile,
+    filesLoaded,
     loadFiles,
   } = fileViewStore;
 
@@ -45,7 +55,7 @@ const Home = observer(() => {
     const fetchUserFiles = async () => {
       try {
         await loadFiles(user.id);
-        console.log('Fetched files: ', filesArr);
+        console.log("Fetched files: ", filesArr);
       } catch (error) {
         console.error("Error fetching files:", error);
       }
@@ -105,7 +115,7 @@ const Home = observer(() => {
         unselectFile();
       }
     }
-  }
+  };
 
   return (
     <Box
@@ -114,218 +124,233 @@ const Home = observer(() => {
         flexDirection: "column",
         backgroundColor: "#faebd7",
         width: "100vw",
-        height: "100%",
-        overflowY: 'auto',
-        flex: 1,
+        height: "100vh",
       }}
     >
       <NavBar />
-
       <Box
         sx={{
-          width: "100%",
-          height: "100%",
           display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "Center",
-          gap: 4,
-          px: 2,
-          pt: 8,
+          flexDirection: "column",
+          overflowY: "auto",
+          height: "100%",
+          width: "100%",
         }}
       >
-        <Paper
-          elevation={6}
+        <Box
           sx={{
-            width: 320,
-            height: 400,
-            p: 3,
-            borderRadius: 4,
-            backgroundColor: "#f1edff",
-            textAlign: "center",
+            width: "100%",
+            height: "100%",
             display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: "Center",
+            gap: 4,
+            px: 2,
+            pt: 8,
           }}
         >
-          <SmartToy sx={{ fontSize: 60, color: "#6a92b2" }} />
-          <Typography
-            variant="h7"
-            sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
-          >
-            Speak to our very own Chatbot!
-          </Typography>
-          <Button
-          variant="contained"
-          sx={{mt:4, alignSelf: "center"}}
-          onClick={() => {
-            if (!selectedFile){
-              alert("⚠️ Please select a file before proceeding to the chatbot.")
-            }
-            router.push("/chatbot");
-          }}
-          >
-
-          Go to Chatbot
-          </Button>
-        </Paper>
-        <Paper
-          elevation={6}
-          sx={{
-            width: 320,
-            height: 400,
-            p: 3,
-            borderRadius: 4,
-            backgroundColor:"#f1edff",
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="h7"
-            sx={{ fontWeight: "bold", mt: 10,mb:2, color: "#6a92b2" }}
-          >
-            Please Insert Notes Here:
-          </Typography>
-          <Box
-            component="label"
-            htmlFor="file-upload"
-            {...getRootProps()}
+          <Paper
+            elevation={6}
             sx={{
-              height: 200,
-              width: 200,
-              border: "2px dashed #6a92b2",
-              borderRadius: 2,
-              display: "inline-block",
-              justifyContent:"center",
-              color: "rgba(5, 169, 175, 0.44)",
-              cursor: "pointer",
-              fontWeight: "bold",
-              backgroundColor: "",
-              "&:hover": {
-                color: "#659abf",
-              },
+              width: 320,
+              height: 400,
+              p: 3,
+              borderRadius: 4,
+              backgroundColor: "#f1edff",
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <UploadFile sx={{ fontSize: 60, color: "#6a92b2",mt:2}} />
-            <Typography sx={{ mt:2,color:"#6a92b2",display:"flex",justifyContent:"center"}}>
-              Click or drag files here to upload
+            <SmartToy sx={{ fontSize: 60, color: "#6a92b2" }} />
+            <Typography
+              variant="h7"
+              sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
+            >
+              Speak to our very own Chatbot!
             </Typography>
-            <input {...getInputProps()} />
-          </Box>
-        </Paper>
-        <Paper
-          elevation={6}
-          sx={{
-            width: 320,
-            height: 400,
-            p: 3,
-            borderRadius: 4,
-            backgroundColor: "#f1edff",
-            textAlign: "center",
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Quiz sx={{fontSize:60,color:"#6a92b2"}}/>
-          <Typography
-            variant="h7"
-            sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
+            <Button
+              variant="contained"
+              sx={{ mt: 4, alignSelf: "center" }}
+              onClick={() => {
+                if (!selectedFile) {
+                  alert(
+                    "⚠️ Please select a file before proceeding to the chatbot."
+                  );
+                }
+                router.push("/chatbot");
+              }}
+            >
+              Go to Chatbot
+            </Button>
+          </Paper>
+          <Paper
+            elevation={6}
+            sx={{
+              width: 320,
+              height: 400,
+              p: 3,
+              borderRadius: 4,
+              backgroundColor: "#f1edff",
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            Create your Own Quiz here!
-          </Typography>
-                 <Button
-          variant="contained"
-          sx={{mt:4, alignSelf: "center"}}
-          onClick={() => {
-            if (!selectedFile){
-              alert("⚠️ Please select a file before proceeding to the quiz creation.")
-            }
-            router.push("/quiz");
-          }}
-          >
-
-          Go to Quiz Creation
-          </Button>
-        </Paper>
-      </Box>
-      
-
-      {filesArr.length > 0 && (
-        <Box
-          component="div"
-          display="flex"
-          flexDirection="column"
-          width='100%'
-          sx={{overflowY: 'auto', m: 4,}}
-        >
-        
-          <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1rem' }} >  
-            <Typography variant="h4" color="black">
-              File Library
+            <Typography
+              variant="h7"
+              sx={{ fontWeight: "bold", mt: 10, mb: 2, color: "#6a92b2" }}
+            >
+              Please Insert Notes Here:
             </Typography>
-          </Box>
-          <Divider sx={{backgroundColor:"f1edff",mb:4}}/>
+            <Box
+              component="label"
+              htmlFor="file-upload"
+              {...getRootProps()}
+              sx={{
+                height: 200,
+                width: 200,
+                border: "2px dashed #6a92b2",
+                borderRadius: 2,
+                display: "inline-block",
+                justifyContent: "center",
+                color: "rgba(5, 169, 175, 0.44)",
+                cursor: "pointer",
+                fontWeight: "bold",
+                backgroundColor: "",
+                "&:hover": {
+                  color: "#659abf",
+                },
+              }}
+            >
+              <UploadFile sx={{ fontSize: 60, color: "#6a92b2", mt: 2 }} />
+              <Typography
+                sx={{
+                  mt: 2,
+                  color: "#6a92b2",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                Click or drag files here to upload
+              </Typography>
+              <input {...getInputProps()} />
+            </Box>
+          </Paper>
+          <Paper
+            elevation={6}
+            sx={{
+              width: 320,
+              height: 400,
+              p: 3,
+              borderRadius: 4,
+              backgroundColor: "#f1edff",
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Quiz sx={{ fontSize: 60, color: "#6a92b2" }} />
+            <Typography
+              variant="h7"
+              sx={{ fontWeight: "bold", mt: 4, color: "#6a92b2" }}
+            >
+              Create your Own Quiz here!
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{ mt: 4, alignSelf: "center" }}
+              onClick={() => {
+                if (!selectedFile) {
+                  alert(
+                    "⚠️ Please select a file before proceeding to the quiz creation."
+                  );
+                }
+                router.push("/quiz");
+              }}
+            >
+              Go to Quiz Creation
+            </Button>
+          </Paper>
+        </Box>
+
+        {filesArr.length > 0 && (
           <Box
             component="div"
             display="flex"
-            flexWrap="wrap"
-            justifyContent="space-around"
-            gap="1em"
+            flexDirection="column"
+            width="100%"
+            sx={{ m: 4 }}
           >
-            {filesArr.map((file) => (
-              <Card
-                key={file.id}
-                sx={{
-                  width: '15em',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                  },
-                  position: 'relative',
-                }}
-                onClick={() => handleFileClick(file)}
-              >
-                <CardContent>
-                  <embed
-                    src={file.url}
-                    width="100%" 
-                    height="100%"
-                  />
-                  <Typography gutterBottom>
-                    {file.fileName}
-                  </Typography>
-                </CardContent>
-                <Box
-                  component="div"
+            <Box
+              sx={{
+                mb: 2,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              <Typography variant="h4" color="black">
+                File Library
+              </Typography>
+            </Box>
+            <Divider sx={{ backgroundColor: "f1edff", mb: 4 }} />
+            <Box
+              component="div"
+              display="flex"
+              flexWrap="wrap"
+              justifyContent="space-around"
+              gap="1em"
+            >
+              {filesArr.map((file) => (
+                <Card
+                  key={file.id}
                   sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '2.5rem', 
-                    height: '2.5rem',
-                    backgroundColor: 'inherit', 
-                    borderRadius: '50%',
-                    cursor: 'pointer',
+                    width: "15em",
+                    cursor: "pointer",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    "&:hover": {
+                      transform: "scale(1.05)",
+                    },
+                    position: "relative",
                   }}
+                  onClick={() => handleFileClick(file)}
                 >
-                  <Checkbox
-                    checked={selectedFile?.id === file.id}
-                  />
-                </Box>
-              </Card>
-            ))}
+                  <CardContent>
+                    <embed src={file.url} width="100%" height="100%" />
+                    <Typography gutterBottom>{file.fileName}</Typography>
+                  </CardContent>
+                  <Box
+                    component="div"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "2.5rem",
+                      height: "2.5rem",
+                      backgroundColor: "inherit",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <Checkbox checked={selectedFile?.id === file.id} />
+                  </Box>
+                </Card>
+              ))}
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   );
 });

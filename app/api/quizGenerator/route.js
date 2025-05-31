@@ -47,7 +47,7 @@ export async function POST(req) {
                     "answer2": "....",
                     "answer3": "....",
                     "answer4": "....",
-                    "correctAnswerIdx": 1
+                    "correctAnswerIdx": 1,2,3 or 4
                     "explanation": "...."
                 },
                 ...

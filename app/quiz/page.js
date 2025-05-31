@@ -1,6 +1,6 @@
 "use client";
 import {useEffect, useState } from "react";
-import { Box,Typography,MenuItem,Button, FormControl, InputLabel, Select, RadioGroup, Radio, FormControlLabel} from "@mui/material";
+import { Box,Typography,MenuItem,Button, FormControl, InputLabel, Select, RadioGroup, Radio, FormControlLabel,Accordion,AccordionSummary,AccordionDetails,} from "@mui/material";
 import NavBar from "../NavBar/NavBar";
 import { useStore } from "@/app/stateManagement/RootStoreProvider";
 import { observer } from "mobx-react";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CancelIcon from '@mui/icons-material/Cancel';
 
 
@@ -165,11 +166,19 @@ const QuizPage = observer(() => {
                     })}
                   </RadioGroup>
                 </FormControl>
-                {isSubmitted && (
-                  <Button variant="outlined" onClick={()=> SetShowExplanations(prev => !prev)} sx={{mt:2}}> 
-                  {ShowExplanations ? "Hide Explanations" : "Show Explanations"}
-                  </Button>
-                )}
+                <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+        >
+          <Typography component="span">Show Explanation</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {questionObj.explanation}
+        </AccordionDetails>
+      </Accordion>
+                
               </Box>
             ))}
           </Box>

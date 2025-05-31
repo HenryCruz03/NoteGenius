@@ -35,6 +35,7 @@ const Home = observer(() => {
     unselectFile,
     filesLoaded,
     loadFiles,
+    addFile,
   } = fileViewStore;
 
   const signIntoFirebaseWithClerk = async () => {

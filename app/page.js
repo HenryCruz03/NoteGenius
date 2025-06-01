@@ -238,6 +238,7 @@ const Home = observer(() => {
               >
                 Click or drag files here to upload
               </Typography>
+              <Typography sx={{fontSize: 12, color: "#6a92b2"}}>*PDF ONLY*</Typography>
               <input {...getInputProps()} />
             </Box>
           </Paper>

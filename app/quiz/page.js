@@ -166,6 +166,7 @@ const QuizPage = observer(() => {
                     })}
                   </RadioGroup>
                 </FormControl>
+                {isSubmitted && (
                 <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -178,7 +179,7 @@ const QuizPage = observer(() => {
           {questionObj.explanation}
         </AccordionDetails>
       </Accordion>
-                
+                )}
               </Box>
             ))}
           </Box>
